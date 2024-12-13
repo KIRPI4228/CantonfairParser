@@ -1,47 +1,33 @@
 package ru.KIRPI4.chinaparser.gui;
 
+import ru.KIRPI4.chinaparser.gui.component.ImageCheckComponent;
 import ru.KIRPI4.chinaparser.http.Client;
-import ru.KIRPI4.chinaparser.http.models.ImageCheckModel;
-import ru.KIRPI4.chinaparser.http.models.ResultAuthenticationModel;
-import ru.KIRPI4.chinaparser.http.models.ResultImageCheckModel;
-import ru.KIRPI4.chinaparser.http.models.ResultLoginModel;
 
-import javax.script.ScriptException;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 
 public class JoinGui extends JFrame {
     private static final String HEADER = "Join";
-    private static final Dimension SIZE = new Dimension(350, 500);
+    private static final Dimension SIZE = new Dimension(326, 500);
 
-    private final JLabel imageCheckBackgroundImage;
-    private final JLabel imageCheckBlockImage;
-
-    private final JTextField emailTextField = new JTextField("email");
-    private final JTextField passwordTextField = new JTextField("password");
+    private final JTextField emailTextField = new JTextField();
+    private final JLabel emailLabel = new JLabel("email:");
+    private final JTextField passwordTextField = new JTextField();
+    private final JLabel passwordLabel = new JLabel("password:");
 
     private final JButton submitButton = new JButton("Join");
-    private final JSlider imageCheckSlider = new JSlider(0, 310, 0);
 
-    private final String imageCheckKey;
+    private ImageCheckComponent imageCheck = new ImageCheckComponent();
 
 
-    public JoinGui(ImageCheckModel imageCheckModel) {
+    public JoinGui() throws URISyntaxException, IOException, ExecutionException, InterruptedException {
         super(HEADER);
 
-        this.imageCheckKey = imageCheckModel.data.id;
-
-        this.imageCheckBackgroundImage = new JLabel(new ImageIcon(Base64.getDecoder().decode(imageCheckModel.data.backgroundImage)));
-        this.imageCheckBlockImage = new JLabel(new ImageIcon(Base64.getDecoder().decode(imageCheckModel.data.blockImage)));
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(SIZE);
         setResizable(false);
 
@@ -50,65 +36,60 @@ public class JoinGui extends JFrame {
         submitButton.setLocation(8, getSize().height-submitButton.getSize().height-40);
         submitButton.addActionListener(this::onSubmitClick);
 
-        imageCheckSlider.setOrientation(JSlider.HORIZONTAL);
-        imageCheckSlider.setSize(getSize().width-15, 45);
-        imageCheckSlider.setLocation(0, submitButton.getLocation().y - imageCheckSlider.getSize().height);
-        imageCheckSlider.addChangeListener(this::onSliderChanged);
+        emailLabel.setSize(getSize().width, 15);
+        emailLabel.setLocation(5, imageCheck.getSize().height+20);
+        emailTextField.setSize(getSize().width, 35);
+        emailTextField.setLocation(0, emailLabel.getLocation().y+emailLabel.getSize().height+5);
 
-        this.imageCheckBackgroundImage.setSize(310, 155);
-
-        this.imageCheckBlockImage.setSize(45, 45);
-        this.imageCheckBlockImage.setLocation(0, imageCheckModel.data.blockY);
-
-        this.imageCheckBackgroundImage.add(add(imageCheckBlockImage));
-
-        emailTextField.setSize(getSize().width, 45);
-        emailTextField.setLocation(0, imageCheckBackgroundImage.getSize().height+20);
-        passwordTextField.setSize(getSize().width, 45);
-        passwordTextField.setLocation(0, imageCheckBackgroundImage.getSize().height+emailTextField.getSize().height+40);
+        passwordLabel.setSize(getSize().width, 15);
+        passwordLabel.setLocation(5, emailTextField.getLocation().y+emailTextField.getSize().height+20);
+        passwordTextField.setSize(getSize().width, 35);
+        passwordTextField.setLocation(0, passwordLabel.getLocation().y+passwordLabel.getSize().height+5);
 
 
         add(emailTextField);
+        add(emailLabel);
         add(passwordTextField);
-        add(imageCheckBackgroundImage);
+        add(passwordLabel);
+        add(imageCheck);
         add(submitButton);
-        add(imageCheckSlider);
 
         setLayout(null);
-
-
-
         setVisible(true);
     }
 
-    private void onSliderChanged(ChangeEvent event) {
-        imageCheckBlockImage.setLocation(imageCheckSlider.getValue(), imageCheckBlockImage.getLocation().y);
+    private void refreshImageCheck() throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+        imageCheck.setVisible(false);
+        remove(imageCheck);
+        imageCheck = new ImageCheckComponent();
+        add(imageCheck);
     }
 
     private void onSubmitClick(ActionEvent event) {
         try {
-            var imageCheckResult = Client.submitImageCheck(imageCheckBlockImage.getLocation().x, imageCheckKey);
+            var imageCheckResult = Client.submitImageCheck(imageCheck.getValue(), imageCheck.getId());
 
             if (!imageCheckResult.isSuccess) {
-                System.out.println("2");
+                refreshImageCheck();
                 return;
             }
 
             var authenticationResult = Client.submitAuthentication(emailTextField.getText(), passwordTextField.getText(), imageCheckResult.sliderKeySuccess, Client.getRsaPublicKey().key);
 
             if (!authenticationResult.isSuccess) {
-                System.out.println("3");
+                refreshImageCheck();
                 return;
             }
 
-            var loginResult = Client.login(authenticationResult.data.code);
+            Client.login(authenticationResult.data.code);
 
-            System.out.println(loginResult.accessToken);
+            new MainGui();
 
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
+
 
 
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

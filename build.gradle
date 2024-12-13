@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.dhatim:fastexcel-reader:0.18.4'
+    implementation 'org.dhatim:fastexcel:0.18.4'
+
     implementation 'org.graalvm.js:js:22.0.0'
     implementation 'org.graalvm.js:js-scriptengine:22.0.0'
     implementation 'com.google.code.gson:gson:2.11.0'
