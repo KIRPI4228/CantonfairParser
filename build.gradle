@@ -1,8 +1,15 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group = 'ru.KIRPI4'
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.KIRPI4.chinaparser.ChinaParser'
+    }
+}
+
+group = 'ru.KIRPI4.chinaparser'
 version = '1.0-SNAPSHOT'
 
 repositories {
