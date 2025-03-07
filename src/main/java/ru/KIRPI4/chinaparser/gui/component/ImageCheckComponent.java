@@ -38,8 +38,8 @@ public class ImageCheckComponent extends JComponent implements SwingConstants, A
         backgroundImage.setSize(BACKGROUND_SIZE);
         backgroundImage.add(blockImage);
 
-        slider.setMinimum(blockImage.getWidth()/2);
-        slider.setMaximum(getWidth() - blockImage.getWidth()/2);
+        slider.setMinimum(0);
+        slider.setMaximum(getWidth() - blockImage.getWidth());
         slider.setValue(slider.getMinimum());
         slider.setOrientation(JSlider.HORIZONTAL);
         slider.setSize(getWidth()-getBlockImageHalf()*2, 45);
@@ -59,7 +59,7 @@ public class ImageCheckComponent extends JComponent implements SwingConstants, A
     }
 
     private void onSliderChanged(ChangeEvent event) {
-        blockImage.setLocation(getValue()-blockImage.getWidth()/2, blockImage.getLocation().y);
+        blockImage.setLocation(getValue(), blockImage.getLocation().y);
     }
 
     private int getBlockImageHalf() {

@@ -1,5 +1,6 @@
 package ru.KIRPI4.chinaparser.gui;
 
+import ru.KIRPI4.chinaparser.ChinaParser;
 import ru.KIRPI4.chinaparser.gui.component.ImageCheckComponent;
 import ru.KIRPI4.chinaparser.http.Client;
 
@@ -58,11 +59,15 @@ public class JoinGui extends JFrame {
         setVisible(true);
     }
 
-    private void refreshImageCheck() throws URISyntaxException, IOException, ExecutionException, InterruptedException {
-        imageCheck.setVisible(false);
-        remove(imageCheck);
-        imageCheck = new ImageCheckComponent();
-        add(imageCheck);
+    private void refreshImageCheck() {
+        try {
+            imageCheck.setVisible(false);
+            remove(imageCheck);
+            imageCheck = new ImageCheckComponent();
+            add(imageCheck);
+        } catch (Exception e) {
+            ChinaParser.onError(e);
+        }
     }
 
     private void onSubmitClick(ActionEvent event) {
@@ -86,10 +91,9 @@ public class JoinGui extends JFrame {
             new MainGui();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            ChinaParser.onError(e);
             return;
         }
-
 
 
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

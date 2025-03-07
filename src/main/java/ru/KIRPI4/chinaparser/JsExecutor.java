@@ -22,6 +22,6 @@ public final class JsExecutor {
     }
 
     public static <T> T execute(String path, String function, Object... args) throws IOException, ScriptException, NoSuchMethodException {
-        return execute(Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8), function, args);
+        return execute(Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8), function, args); //TODO try on mac
     }
 }

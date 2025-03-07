@@ -27,7 +27,7 @@ public class ExcelManager {
         sheet.value(0, 11, "Material");
         sheet.value(0, 12, "Place of shipment");
         sheet.value(0, 13, "place of origin");
-        sheet.value(0, 14, "Target markets");
+        //sheet.value(0, 14, "Target markets");
 
         sheet.range(1, 0, models.size(), 14).style().fontName("Arial").fontSize(10).set();
 
@@ -47,7 +47,7 @@ public class ExcelManager {
             sheet.value(i, 11, model.specifications.material);
             sheet.value(i, 12, model.specifications.placeOfShipment);
             sheet.value(i, 13, model.specifications.placeOfOrigin);
-            sheet.value(i, 14, model.targetMarkets);
+            //sheet.value(i, 14, model.targetMarkets);
         });
 
         workbook.finish();

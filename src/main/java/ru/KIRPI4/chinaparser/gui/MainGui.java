@@ -13,6 +13,8 @@ public class MainGui extends JFrame {
 
     public MainGui() {
         super(HEADER);
+        setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+
         setSize(SIZE);
         setResizable(false);
 

@@ -9,6 +9,10 @@ jar {
     }
 }
 
+shadowJar {
+    mergeServiceFiles()
+}
+
 group = 'ru.KIRPI4.chinaparser'
 version = '1.0-SNAPSHOT'
 
